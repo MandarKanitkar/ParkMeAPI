@@ -1,8 +1,8 @@
 const MongoClient = require('mongodb').MongoClient;
 const conf = require('config');
-
+assert = require('assert');
 var MongoConnector = function(dbname) {
- this.mongo_url = "mongodb://" + conf.MONGO_USERNAME + ":" + conf.MONGO_PASSWORD + "@" + conf.MONGO_HOST + ":" + conf.MONGO_PORT + "/" + dbname + "?authSource=admin";
+ this.mongo_url =  'mongodb://localhost:27017/ParkMe';
  this.mongo_url_alerts = "mongodb://bflogadmin:safe4now@bfmongo201.innovate.ibm.com:27017/bfdata";
 }
 
@@ -354,6 +354,53 @@ MongoConnector.prototype.getAllLogs = function(query,callback) {
     db.close();
   });
 };
+
+MongoConnector.prototype.getUserParkMe = function(query,callback) {
+  // callback({"message": err}, null);
+  var findDocuments = function(db, callback) {
+    // Get the documents collection
+    var collection = db.collection('Users');
+    // Find some documents
+    collection.find({}).toArray(function(err, docs) {
+      assert.equal(err, null);
+      console.log("Found the following records");
+      console.log(docs)
+      callback(null,docs);
+    });
+  }
+  
+    MongoClient.connect("mongodb://localhost:27017/ParkMe", function(err, db) {
+      if(err){
+        console.log("Error connecting server");
+        callback({"message":err}, null);
+      }
+      else {
+        db.collection('Users').find({'Username':query.Username,'Password':query.Password}).toArray(function (err, docs){
+          if(err){
+            
+            db.close();
+            callback({"message": err}, null);
+          }
+  
+          if(!docs || docs.length<1){
+  
+            db.close();
+            //callback(null, query);
+            callback({"message": "No such record"}, null);
+          }
+          else {
+            db.close();
+            
+            callback(null, docs);
+          }
+        });
+
+      }
+  
+      db.close();
+    });
+  };
+
 MongoConnector.prototype.getAlertSettings = function(query,callback) {
 
   MongoClient.connect(this.mongo_url_alerts, function(err, db) {
