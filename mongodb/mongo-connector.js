@@ -368,6 +368,8 @@ MongoConnector.prototype.getUserParkMe = function(query,callback) {
       callback(null,docs);
     });
   }
+
+  
   
     MongoClient.connect("mongodb://localhost:27017/ParkMe", function(err, db) {
       if(err){
@@ -392,6 +394,55 @@ MongoConnector.prototype.getUserParkMe = function(query,callback) {
             db.close();
             
             callback(null, true);
+          }
+        });
+
+      }
+  
+      db.close();
+    });
+  };
+
+
+MongoConnector.prototype.getPrivateParkings = function(query,callback) {
+  // callback({"message": err}, null);
+  var findDocuments = function(db, callback) {
+    // Get the documents collection
+    var collection = db.collection('PrivateParking');
+    // Find some documents
+    collection.find({}).toArray(function(err, docs) {
+      assert.equal(err, null);
+      console.log("Found the following records");
+      console.log(docs)
+      callback(null,docs);
+    });
+  }
+
+  
+  
+    MongoClient.connect("mongodb://localhost:27017/ParkMe", function(err, db) {
+      if(err){
+        console.log("Error connecting server");
+        callback({"message":err}, null);
+      }
+      else {
+        db.collection('PrivateParking').find({}).toArray(function (err, docs){
+          if(err){
+            
+            db.close();
+            callback({"message": err}, null);
+          }
+  
+          if(!docs || docs.length<1){
+  
+            db.close();
+            //callback(null, query);
+            callback(null, []);
+          }
+          else {
+            db.close();
+            
+            callback(null, docs);
           }
         });
 
