@@ -386,12 +386,12 @@ MongoConnector.prototype.getUserParkMe = function(query,callback) {
   
             db.close();
             //callback(null, query);
-            callback({"message": "No such record"}, null);
+            callback(null, false);
           }
           else {
             db.close();
             
-            callback(null, docs);
+            callback(null, true);
           }
         });
 
