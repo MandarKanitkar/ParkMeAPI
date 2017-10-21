@@ -211,6 +211,21 @@ router.get('/getUserParkMe', function (req, res) {
   });
 });
 
+router.get('/setUserParkMe', function (req, res) {
+  
+  var mongoConnector = new MongoConnector('ParkMe');
+  //return res.status(400).json({ 'username':req.query.password });
+  mongoConnector.setUserParkMe(req.query, function (err, doc) {
+  
+    if (err) {
+      return res.status(500).json(err.message);
+    }
+    else {
+      return res.status(200).json(doc);
+    }
+  });
+});
+
 router.get('/getPrivateParkings', function (req, res) {
   
   var mongoConnector = new MongoConnector('ParkMe');
