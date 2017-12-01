@@ -226,6 +226,22 @@ router.get('/setUserParkMe', function (req, res) {
   });
 });
 
+router.get('/bookParkings', function (req, res) {
+  
+  var mongoConnector = new MongoConnector('ParkMe');
+  //return res.status(400).json({ 'username':req.query.password });
+  //console.log("reached");
+  mongoConnector.bookParkings(req.query, function (err, doc) {
+  
+    if (err) {
+      return res.status(500).json(err.message);
+    }
+    else {
+      return res.status(200).json(doc);
+    }
+  });
+});
+
 router.get('/getPrivateParkings', function (req, res) {
   
   var mongoConnector = new MongoConnector('ParkMe');
@@ -241,13 +257,13 @@ router.get('/getPrivateParkings', function (req, res) {
   });
 });
 
-router.get('/getAlertSettings', function (req, res) {
-  if (req.query == "" || req.query == undefined){
-    return res.status(400).json({ "Error": "Please specify `correct record` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAlertSettings(req.query, function (err, doc) {
+//getMyParkingHistory
+router.get('/getMyParkingHistory', function (req, res) {
+ 
+  var mongoConnector = new MongoConnector('ParkMe');
+  //return res.status(400).json({ 'username':req.query.password });
+  mongoConnector.getMyParkingHistory(req.query, function (err, doc) {
+  
     if (err) {
       return res.status(500).json(err.message);
     }
@@ -256,275 +272,4 @@ router.get('/getAlertSettings', function (req, res) {
     }
   });
 });
-
-
-router.get('/getAlertSettingsByPersona', function (req, res) {
-  if (req.query.persona == "" || req.query.persona == undefined) {
-    return res.status(400).json({ "Error": "Please specify `persona` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAlertSettingsByPersona(req.query.persona, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getAlertSettingsByPersonaAndDashboard', function (req, res) {
-  if (req.query.persona == "" || req.query.persona == undefined||req.query.dashboard == "" || req.query.dashboard == undefined
-) {
-    return res.status(400).json({ "Error": "Please specify `personaanddashboard as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAlertSettingsByPersonaAndDashboard(req.query.persona,req.query.dashboard, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-router.post('/addAlertSettings', function (req, res) {
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.addAlertSettings(req.body, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.put('/updateAlertSettings', function (req, res) {
-  if (req.query.persona == "" || req.query.persona == undefined) {
-    return res.status(400).json({ "Error": "Please specify `persona` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.updateAlertSettings(req.query.persona,req.body[0],function (err, doc) {
-      try {
-          JSON.parse(doc);
-          }
-      catch (e) {
-                }
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getLogsByName', function (req, res) {
-  if (req.query.adopter_name == "" || req.query.adopter_name == undefined) {
-    return res.status(400).json({ "Error": "Please specify `name ` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getLogsByName(req.query.adopter_name, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getLogsByNameAndDate', function (req, res) {
-  if (req.query.adopter_name == "" || req.query.adopter_name == undefined||req.query.completed_at == "" || req.query.completed_at == undefined
-) {
-    return res.status(400).json({ "Error": "Please specify `name and date ` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getLogsByNameAndDate(req.query.adopter_name,req.query.completed_at, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.put('/updateLogsByNameAndDate', function (req, res) {
-  if (req.query.adopter_name == "" || req.query.adopter_name == undefined||req.query.completed_at == "" || req.query.completed_at == undefined
-) {
-    return res.status(400).json({ "Error": "Please specify `name and date ` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.updateLogsByNameAndDate(req.query.adopter_name,req.query.completed_at, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getLogsByJobIDAndDate', function (req, res) {
-  if (req.query.jobID == "" || req.query.jobID == undefined||req.query.completed_at == "" || req.query.completed_at == undefined
-) {
-    return res.status(400).json({ "Error": "Please specify `jobid and date ` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getLogsByJobIDAndDate(req.query.jobID,req.query.completed_at, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getAlertsQuickSummaryDataByDate', function (req, res) {
-  if (req.query.date == "" || req.query.date == undefined) {
-    return res.status(400).json({ "Error": "Please specify `date` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAlertsQuickSummaryDataByDate(req.query.date, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getAlertsQuickSummaryData', function (req, res) {
-  if (req.query == "" || req.query == undefined) {
-    return res.status(400).json({ "Error": "Please specify `correct data` as query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAlertsQuickSummaryData(req.query, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.get('/getAllLogs', function (req, res) {
-  if (req.query == "" || req.query == undefined) {
-    return res.status(400).json({ "Error": "Please specify `correct logs` query" });
-  }
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.getAllLogs(req.query, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-
-router.post('/addAlertQuickSummaryData', function (req, res) {
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.addAlertQuickSummaryData(req.body, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-});
-router.post('/addLogs', function (req, res) {
-
-  var mongoConnector = new MongoConnector('bfmongodb');
-  mongoConnector.addLogs(req.body, function (err, doc) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(doc);
-    }
-  });
-  });
-
-/* This function gets the streaming data for raw logs */
-  router.get('/startStreamingRaw', function(req, res, next) {
-    if(req.query.topic == "" || req.query.topic == undefined) {
-      return res.status(400).json({"Incomplete Request": "Please specify `topic` as query"});
-    }
-
-    console.log("Streaming started for raw");
-
-    // Call kafkaConsumerRaw
-    kafkaConsumerRaw(req.query.topic, req.io);
-
-    return res.status(200).json({"response": "Streaming started"});
-  });
-
-/* This function gets the streaming data for enriched logs */
-  router.get('/startStreamingEnriched', function(req, res, next) {
-    if(req.query.topic == "" || req.query.topic == undefined) {
-      return res.status(400).json({"Incomplete Request": "Please specify `topic` as query"});
-    }
-
-    console.log("Streaming started for enriched");
-
-    // Call kafkaConsumerEnriched
-    kafkaConsumerEnriched(req.query.topic, req.io);
-
-    return res.status(200).json({"response": "Streaming started"});
-  });
-
-
-
-  /* This function gets the streaming data from kafka */
-  router.get('/startStreamingBuffered', function(req, res, next) {
-    if(req.query.topic == "" || req.query.topic == undefined) {
-      return res.status(400).json({"Incomplete Request": "Please specify `topic` as query"});
-    }
-    consumer = null;
-    consumer = new kafkaConsumerBuffered(req.query.topic, req.io);
-    return res.status(200).json({"response": "Streaming started"});
-  });
-
-
-  /* This function stops consuming data from kafka and stores data in a buffer */
-  router.get('/stopStreamingBuffered', function(req, res) {
-    consumer.close(function(data) {
-      return res.send(data);
-    });
-  });
-
-router.get('/getReducedAlertsByDateAndType', function(req, res, next) {
-  if(req.query.date == "" || req.query.date == undefined || req.query.job_type == "" || req.query.job_type == undefined) {
-    return res.status(400).json({"Incomplete Request": "Please specify `date` and `job_type` as query"});
-  }
-
-  var mongoConnector = new AlertsMongoConnector('bfmongodb');
-  mongoConnector.getReducedAlertsByDateAndType(req.query.date, req.query.job_type, function (err, docs) {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
-    else {
-      return res.status(200).json(docs);
-    }
-  });
-});
-
 module.exports = router;
