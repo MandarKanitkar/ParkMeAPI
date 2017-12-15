@@ -44,7 +44,7 @@ MongoConnector.prototype.getUserParkMe = function(query,callback) {
           else {
             db.close();
             
-            callback(null, docs[0]._id);
+            callback(null, docs[0]);
           }
         });
 
@@ -197,6 +197,8 @@ MongoConnector.prototype.setUserParkMe = function(query,callback) {
     });
   };
 
+  
+
   MongoConnector.prototype.bookParkings = function(query,callback) {
     // callback({"message": err}, null);
   
@@ -242,7 +244,56 @@ MongoConnector.prototype.setUserParkMe = function(query,callback) {
       });
     };
 
+    MongoConnector.prototype.shareParking = function(query,callback) {
+      // callback({"message": err}, null);
+    
+      var findDocuments = function(db, callback) {
+        // Get the documents collection
+        var collection = db.collection('PrivateParking');
+        // Find some documents
+        collection.find({}).toArray(function(err, docs) {
+          assert.equal(err, null);
+          console.log("Found the following records");
+          console.log(docs)
+          callback(null,docs);
+        });
+      }
+    
+      
+      
+        MongoClient.connect("mongodb://localhost:27017/ParkMe", function(err, db) {
+          if(err){
+            console.log("Error connecting server");
+            callback({"message":err}, null);
+          }
+          else {
+           
+              // Get the documents collection
+              console.log(query.latitude);
+              console.log(query.longitude);
+              console.log(query.name);
+              console.log(query.startTime);
+              console.log(query.endTime);
 
+              var collection = db.collection('PrivateParking');
+              // Insert some documents
+              collection.insertMany([
+                {'userId':"query.userId",'Latitude':40.726932,'Longitude':-74.06857200000002,'Name':query.name,'startTime':query.startTime,'endTime':query.endTime}
+              
+              ], function(err, result) {
+                assert.equal(err, null);
+                assert.equal(1, result.result.n);
+                assert.equal(1, result.ops.length);
+               // console.log("Inserted 2 documents into the collection");
+                callback(null,"Success");
+              });
+            
+    
+          }
+      
+          db.close();
+        });
+      };
 
 
 module.exports = MongoConnector;

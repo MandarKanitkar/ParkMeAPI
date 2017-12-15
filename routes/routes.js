@@ -242,6 +242,21 @@ router.get('/bookParkings', function (req, res) {
   });
 });
 
+router.get('/shareParking', function (req, res) {
+  
+  var mongoConnector = new MongoConnector('ParkMe');
+
+  mongoConnector.shareParking(req.query, function (err, doc) {
+  
+    if (err) {
+      return res.status(500).json(err.message);
+    }
+    else {
+      return res.status(200).json(doc);
+    }
+  });
+});
+
 router.get('/getPrivateParkings', function (req, res) {
   
   var mongoConnector = new MongoConnector('ParkMe');
